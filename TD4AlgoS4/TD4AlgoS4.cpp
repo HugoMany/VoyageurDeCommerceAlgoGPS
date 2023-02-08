@@ -46,6 +46,10 @@ using namespace std;
 double cityVectToDistanceVect(vector<string>& villes);
 void toutesLesPermutations(vector<string>& villes, int debut, int fin);
 
+template <typename T>
+ostream& operator<<(ostream& monStylo, const vector<T>& v);
+
+void progressBar();
 double deg2rad(double deg) {
 	return (deg * 3.14 / 180);
 }
@@ -59,19 +63,19 @@ double getDistanceFromLatLonInKm(double lat1, double lon1, double lat2, double l
 }
 
 
-vector<string> villes = { "Lille","New York","Stockholm","Bergen","Amsterdam","Londre" };
-vector<pair<double, double>> co = { {50.6365654,3.0635282},{40.7127281,-74.0060152},{59.3251172,18.0710935},{60.3943055,5.3259192},{52.3727598,4.8936041},{51.5073219,-0.1276474} };
+vector<string> villes = { "Lille","New York","Stockholm","Bergen","Amsterdam","Londre","Vienne"};
+vector<pair<double, double>> co = { {50.6365654,3.0635282},{40.7127281,-74.0060152},{59.3251172,18.0710935},{60.3943055,5.3259192},{52.3727598,4.8936041},{51.5073219,-0.1276474},{48.196430, 16.392019} };
 map<string, pair<double, double>	> cityCoord;
 vector<pair<double, vector<string>>> allDist;
+float progress=0;
 
 int main()
 {
 	//Intro
 
-	cout << "-----------------------------------------------------\n" << endl;
+	cout << "--------------------------------------------------------\n" << endl;
 	cout << "Hugo MANY CIR2 : TP Voyageur de Commerce (with GPS coord)" << endl;
-	cout << "\n-----------------------------------------------------" << endl;
-
+	cout << "\n--------------------------------------------------------" << endl;
 
 	//Mise en Map avec Coord
 	
@@ -81,7 +85,9 @@ int main()
 		cityCoord[villes[idx]] = co[idx];
 		idx++;
 	}
-	toutesLesPermutations(villes, 0, villes.size() - 1);
+
+
+	toutesLesPermutations(villes, 1, villes.size() - 1);
 
 	int bestIdx=0;
 	double smallDistance = allDist[0].first;
@@ -95,15 +101,34 @@ int main()
 	
 	cout << "La Distance la plus petite est :" << allDist[bestIdx].first<<" km" << endl;
 	cout << "\nLa meilleur sequence pour faire ce trajet en terme de distance est:"<<endl;
-	for (int i = 0; i < allDist[bestIdx].second.size(); i++)
-	{
-		cout << allDist[bestIdx].second[i]<<" -> ";
-	}
+	cout << allDist[bestIdx].second<<endl;
 	cout << "\nAvec " << allDist.size()<< " essais";
 	cout << endl;
 
 
+
+
 	return 0;
+}
+
+void progressBar(float progress){
+	
+		int barWidth = 70;
+
+		std::cout << "[";
+		int pos = barWidth * progress;
+		for (int i = 0; i < barWidth; ++i) {
+			if (i < pos) std::cout << "=";
+			else if (i == pos) std::cout << ">";
+			else std::cout << " ";
+		}
+		std::cout << "] " << int(progress * 100.0) << " %\r";
+		std::cout.flush();
+
+		//progress += 0.16; // for demonstration only
+	
+	std::cout << std::endl;
+
 }
 /// <summary>
 /// Surcharge d'operateur pour l'affiches d'un vector
@@ -135,6 +160,7 @@ double cityVectToDistanceVect(vector<string>& villes) {
 	{
 		totalDist +=getDistanceFromLatLonInKm(cityCoord[villes[i]].first, cityCoord[villes[i]].second, cityCoord[villes[i+1]].first, cityCoord[villes[i+1]].second);
 	}
+	totalDist += getDistanceFromLatLonInKm(cityCoord[villes[0]].first, cityCoord[villes[0]].second, cityCoord[villes[villes.size()-1]].first, cityCoord[villes[villes.size()-1]].second);
 	return totalDist;
 }
 
@@ -146,8 +172,9 @@ double cityVectToDistanceVect(vector<string>& villes) {
 /// <param name="fin"></param>
 void toutesLesPermutations(vector<string>& villes, int debut, int fin)
 {
-	if (debut == fin)
+	if (debut == fin) {
 		allDist.push_back(make_pair(cityVectToDistanceVect(villes), villes));
+	}
 	else
 	{
 		// Permutations made
