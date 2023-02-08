@@ -66,6 +66,13 @@ vector<pair<double, vector<string>>> allDist;
 
 int main()
 {
+	//Intro
+
+	cout << "-----------------------------------------------------\n" << endl;
+	cout << "Hugo MANY CIR2 : TP Voyageur de Commerce (with GPS coord)" << endl;
+	cout << "\n-----------------------------------------------------" << endl;
+
+
 	//Mise en Map avec Coord
 	
 	int idx = 0;
@@ -92,7 +99,7 @@ int main()
 	{
 		cout << allDist[bestIdx].second[i]<<" -> ";
 	}
-		
+	cout << "\nAvec " << allDist.size()<< " essais";
 	cout << endl;
 
 
